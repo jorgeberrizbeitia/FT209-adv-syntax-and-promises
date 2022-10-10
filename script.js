@@ -426,25 +426,25 @@ console.log(algo)
 requestBookPromise(0)
 .then((response) => {
   // solo se ejecuta cuando la promesa cambia de status a: Fullfilled (Success)
-  console.log("response", response)
+  // console.log("response", response)
 
   // ENCADENAR PROMESAS
   return requestBookPromise(1)
 })
 .then((response) => {
-  console.log("response", response)
+  // console.log("response", response)
   return requestBookPromise(2)
 })
 .then((response) => {
-  console.log("response", response)
+  // console.log("response", response)
   return requestBookPromise(3)
 })
 .then((response) => {
-  console.log("response", response)
+  // console.log("response", response)
 })
 .catch((error) => {
   // solo si hay un error en la promesa. Cambia de estatus a Rejected
-  console.log("error", error)
+  // console.log("error", error)
 })
 
 
@@ -458,12 +458,12 @@ async function getBooks() {
   // que la funcion sea asincrona nos permite usar la palabra await
   try {
     // intenta hacer lo siguiente
-    let response = await requestBookPromise(0)
+    let response = await requestBookPromise(0) // 0.5seg
     // await va a esperar que se resuelva la promera y guardará el valor retornado en la variable
     console.log("response", response)
-    let response2 = await requestBookPromise(1)
+    let response2 = await requestBookPromise(1) // 0.2 seg
     console.log("response2", response2)
-    let response3 = await requestBookPromise(2)
+    let response3 = await requestBookPromise(2) // 0.8 seg
     console.log("response3", response3)
   }
   catch (error) {
@@ -471,4 +471,53 @@ async function getBooks() {
   }
 }
 
-getBooks()
+// getBooks()
+
+
+// Promise.all
+
+// forma de recibir varias promesas optimizando el tiempo de respuesta.
+
+// retornar un array con todas las respuestas (si falla una, todo falla y va al catch)
+Promise.all([
+  requestBookPromise(0), // 0.5 seg
+  requestBookPromise(1), // 0.2 seg
+  requestBookPromise(6), // 0.8 seg
+])
+.then((response) => {
+  // .todo se resuelve a los 0.8 segundos
+  console.log(response)
+})
+.catch((error) => {
+  console.log(error)
+})
+
+// retornar un array con todas las respuestas y su status.
+Promise.allSettled([
+  requestBookPromise(0), // 0.5 seg
+  requestBookPromise(1), // 0.2 seg
+  requestBookPromise(6), // 0.8 seg
+])
+.then((response) => {
+  console.log("allSettled", response)
+})
+
+
+// fetch => una herramienta en JS que nos permite acceder a data de otros lugares.
+
+fetch("https://www.boredty") // retornar una promesa
+.then((response) => {
+  // console.log(response)
+  return response.json() // esto es algo obligatorio al usar fetch
+})
+.then((response) => {
+  let paragDOM = document.querySelector("#parag")
+  paragDOM.innerText = response.activity
+  console.log(response)
+})
+.catch((error) => {
+  console.log(error)
+})
+
+
+
